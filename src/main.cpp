@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 
 #include <memory>
-
+#include <iostream>
 
 int main(void)
 {
@@ -27,18 +27,31 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
+    const int blockSize = 40;
+    const int updateInterval = 1;
+
+
     InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard input");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    auto time = GetTime();
+    Vector2 snakePosition = { 200, 200 };
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("move the ball with arrow keys", 10, 10, 20, DARKGRAY);
+        auto newTime = GetTime();
+        if (newTime - time > updateInterval )
+        {
+            time = newTime;
 
-        EndDrawing();
+            BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawRectangleV( snakePosition, { blockSize, blockSize }, BLACK );
+                snakePosition.x += blockSize;
+
+            EndDrawing();
+        }
     }
     CloseWindow();
 
