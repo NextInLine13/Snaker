@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <iostream>
+#include <vector>
 
 enum class Direction
 {
@@ -53,13 +54,13 @@ int main(void)
     const int blockSize = 40;
     constexpr int screenWidth = 10 * blockSize;
     constexpr int screenHeight = 10 * blockSize;
-    const float updateInterval = 0.75;
+    const float updateInterval = 0.5;
+    std::vector<Vector2> snakePartsPositions = { {200, 200}, { 160, 200 }, { 120, 200 }, { 80, 200 } };
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard input");
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
     auto time = GetTime();
-    Vector2 snakePosition = { 200, 200 };
     Direction snakeDirection = Direction::Right;
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -86,13 +87,22 @@ int main(void)
         if (newTime - time > updateInterval )
         {
             time = newTime;
+
+            for ( auto i = snakePartsPositions.size() ; i > 0 ; --i )
+            {
+                snakePartsPositions[i].x = snakePartsPositions[i -1].x;
+                snakePartsPositions[i].y = snakePartsPositions[i -1].y;
+            }
             auto deltaPosition = GetUpdatePositionVector( snakeDirection, blockSize );
-            snakePosition.x += deltaPosition.x;
-            snakePosition.y += deltaPosition.y;
+            snakePartsPositions[0].x += deltaPosition.x;
+            snakePartsPositions[0].y += deltaPosition.y;
         }
             BeginDrawing();
                 ClearBackground(RAYWHITE);
-                DrawRectangleV( snakePosition, { blockSize, blockSize }, BLACK );
+                for (auto snakePart : snakePartsPositions)
+                {
+                    DrawRectangleV( snakePart, { blockSize, blockSize }, BLACK );
+                }
             EndDrawing();
     }
     CloseWindow();
